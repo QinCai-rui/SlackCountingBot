@@ -55,7 +55,7 @@ To set up and run the Slack Counting Game Bot, follow these steps:
 
 5. Start the bot:
    ```bash
-   npm start
+   node app.js
    ```
 
 6. Invite the bot to your designated counting channel in Slack
