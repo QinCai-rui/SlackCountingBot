@@ -6,8 +6,8 @@ const mockStats = {
     highestCountTimestamp: '2023-05-01T12:00:00Z',
     totalSuccessfulCounts: 500,
     userStats: {
-        U1234: {successful: 50, unsuccessful: 5},
-        U5678: {successful: 40, unsuccessful: 3},
+        U1234: {successful: 50, unsuccessful: 5, totalComplexity: 100, countWithComplexity: 50},
+        U5678: {successful: 40, unsuccessful: 3, totalComplexity: 80, countWithComplexity: 40},
     },
     milestones: {
         '42': 'U1234',
@@ -21,14 +21,14 @@ const mockStats = {
     },
 };
 
-// Mock Slack client
+// Improved mock Slack client
 const mockClient = {
     users: {
         info: jest.fn().mockImplementation(({user}) => {
             if (user === 'U1234') {
-                return Promise.resolve({user: {real_name: 'John Doe'}});
+                return Promise.resolve({user: {username: 'johndoe'}});
             } else if (user === 'U5678') {
-                return Promise.resolve({user: {real_name: 'Jane Smith'}});
+                return Promise.resolve({user: {username: 'janesmith'}});
             } else {
                 return Promise.reject(new Error('User not found'));
             }
@@ -37,7 +37,7 @@ const mockClient = {
 };
 
 describe('getStatsMessage', () => {
-    test('generates correct stats message', async () => {
+    it('generates correct stats message', async () => {
         const message = await getStatsMessage(mockClient, mockStats);
 
         expect(message).toContain('📊 Counting Game Stats 📊');
@@ -45,14 +45,14 @@ describe('getStatsMessage', () => {
         expect(message).toContain('Achieved on: 5/1/2023, 12:00:00 PM UTC');
         expect(message).toContain('Total successful counts: 500');
         expect(message).toContain('🏆 Top Counters:');
-        expect(message).toContain('John Doe: 50 (5 fails)');
-        expect(message).toContain('Jane Smith: 40 (3 fails)');
+        expect(message).toContain('johndoe: 50 (5 fails, Avg Complexity: 2.00)');
+        expect(message).toContain('janesmith: 40 (3 fails, Avg Complexity: 2.00)');
         expect(message).toContain('🎯 Milestones:');
-        expect(message).toContain('42: John Doe');
-        expect(message).toContain('69: Jane Smith');
-        expect(message).toContain('100: John Doe');
+        expect(message).toContain('42: johndoe');
+        expect(message).toContain('69: janesmith');
+        expect(message).toContain('100: johndoe');
         expect(message).toContain('🧮 Most Complicated Operation:');
-        expect(message).toContain('John Doe: 2+2*2 (Complexity: 3)');
+        expect(message).toContain('johndoe: 2+2*2 (Complexity: 3)');
     });
 
     test('handles errors when fetching user info', async () => {

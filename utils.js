@@ -28,8 +28,14 @@ async function getStatsMessage(client, stats) {
     for (const [userId, userStats] of sortedUsers) {
         try {
             const userInfo = await client.users.info({user: userId});
-            const username = userInfo.user.real_name || userInfo.user.name;
-            message += `${username}: ${userStats.successful} (${userStats.unsuccessful} fails)\n`;
+            const username = userInfo.user.username || userInfo.user.name;
+            const avgComplexity = userStats.countWithComplexity > 0
+                ? (userStats.totalComplexity / userStats.countWithComplexity).toFixed(2)
+                : 'N/A';
+            message += `${username}: ${userStats.successful} (${userStats.unsuccessful} fails, Avg Complexity: ${avgComplexity}`;
+            if (userStats.primes) message += `, Primes: ${userStats.primes}`;
+            if (userStats.perfectSquares) message += `, Perfect Squares: ${userStats.perfectSquares}`;
+            message += ')\n';
         } catch (error) {
             message += `<@${userId}>: ${userStats.successful} (${userStats.unsuccessful} fails)\n`;
         }
@@ -39,7 +45,7 @@ async function getStatsMessage(client, stats) {
     for (const [milestone, userId] of Object.entries(stats.milestones)) {
         try {
             const userInfo = await client.users.info({user: userId});
-            const username = userInfo.user.real_name || userInfo.user.name;
+            const username = userInfo.user.username || userInfo.user.name;
             message += `${milestone}: ${username}\n`;
         } catch (error) {
             message += `${milestone}: <@${userId}>\n`;
@@ -50,7 +56,7 @@ async function getStatsMessage(client, stats) {
     if (stats.mostComplicatedOperation.user) {
         try {
             const userInfo = await client.users.info({user: stats.mostComplicatedOperation.user});
-            const username = userInfo.user.real_name || userInfo.user.name;
+            const username = userInfo.user.username || userInfo.user.name;
             message += `${username}: ${stats.mostComplicatedOperation.expression} (Complexity: ${stats.mostComplicatedOperation.complexity})\n`;
         } catch (error) {
             message += `<@${stats.mostComplicatedOperation.user}>: ${stats.mostComplicatedOperation.expression} (Complexity: ${stats.mostComplicatedOperation.complexity})\n`;

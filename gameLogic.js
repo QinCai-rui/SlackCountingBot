@@ -16,7 +16,7 @@ const {
     setLastUser
 } = require('./statsManager');
 
-async function processMessage(message, say, client) {
+async function processMessage(message, say, client, isEval = false) {
     if (!/^[\d+\-*/^√().\s!]+$|^.*sqrt\(.*\).*$/.test(message.text)) {
         return;
     }
@@ -26,9 +26,13 @@ async function processMessage(message, say, client) {
     let complexity;
     try {
         expression = parseExpression(message.text);
-        number = await evaluateExpression(expression);
-
+        number = Math.round(await evaluateExpression(expression)); // Round the result
         complexity = calculateComplexity(message.text);
+
+        if (isEval) {
+            // For !eval, just return the result without affecting game state
+            return `Expression: ${message.text}, Evaluated: ${number}, Complexity: ${complexity}`;
+        }
 
         const stats = getStats();
         if (complexity > stats.mostComplicatedOperation.complexity) {
@@ -44,6 +48,9 @@ async function processMessage(message, say, client) {
 
     } catch (error) {
         console.log('Error evaluating expression:', error);
+        if (isEval) {
+            return `Error evaluating expression: ${error.message}`;
+        }
         return;
     }
 
@@ -68,6 +75,9 @@ async function processMessage(message, say, client) {
     } else {
         await handleCorrectCount(message, say, client, number, complexity);
     }
+
+    // Add a return statement here
+    return `Expression: ${message.text}, Evaluated: ${number}, Complexity: ${complexity}`;
 }
 
 async function handleIncorrectCount(message, say, client, reason) {
@@ -105,18 +115,52 @@ async function handleCorrectCount(message, say, client, number, complexity) {
 }
 
 function getReactionEmoji(number) {
-    if (number === 69) return 'cancer';
-    if (number % 100 === 0) return '💯';
-    return 'white_check_mark';
+    switch (number) {
+        case 42: return 'rocket';
+        case 69: return 'cancer';
+        case 314: return 'pie';
+        case 420: return 'herb';
+        case 666: return 'smiling_imp';
+        case 777: return 'four_leaf_clover';
+        case 1000: return 'fireworks';
+        case 1234: return '1234';
+        case 1337: return 'computer';
+        case 2048: return 'jigsaw';
+        case 3141: return 'abacus';
+        case 5000: return 'raised_hand_with_fingers_splayed';
+        case 9000: return 'muscle';
+        case 12345: return '1234';
+        default:
+            if (number % 100 === 0) return '💯';
+            return 'white_check_mark';
+    }
 }
 
 async function checkAndHandleMilestones(message, say, number) {
-    const specialMilestones = [42, 69, 420, 666];
+    const specialMilestones = [
+        42,    // The Answer to Life, the Universe, and Everything
+        69,    // Nice
+        314,   // Pi
+        420,   // Herb
+        666,   // Devil's number
+        777,   // Lucky number
+        1000,  // Big round number
+        1234,  // Sequential numbers
+        1337,  // LEET
+        2048,  // Popular game
+        3141,  // More digits of Pi
+        5000,  // Another big milestone
+        9000,  // It's over 9000!
+        12345  // More sequential numbers
+    ];
+
     if (number % 100 === 0 || specialMilestones.includes(number)) {
         const stats = getStats();
         stats.milestones[number] = message.user;
         updateStats({milestones: stats.milestones});
-        await say(`🎉 Congratulations <@${message.user}>! You've reached ${number}! 🎉`);
+
+        const emoji = getReactionEmoji(number);
+        await say(`${emoji} Congratulations <@${message.user}>! You've reached ${number}! ${emoji}`);
     }
 }
 
@@ -151,4 +195,9 @@ function updateGameState(user, number, complexity) {
     updateStats({userStats: stats.userStats});
 }
 
-module.exports = {processMessage};
+module.exports = {
+    processMessage,
+    getReactionEmoji,  // Add this line
+    checkAndHandleMilestones,
+    updateGameState
+};

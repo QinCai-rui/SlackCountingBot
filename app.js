@@ -30,6 +30,26 @@ receiver.router.post('/', (req, res) => {
 const lock = new AsyncLock();
 const messageQueue = [];
 
+// Function to process messages (both regular and !eval)
+async function processAndRespond(message, say, client, isEval = false) {
+    try {
+        const result = await processMessage(message, say, client, isEval);
+        if (isEval) {
+            // For !eval, we want to return the result explicitly
+            if (result) {
+                await say(result);
+            } else {
+                await say("Invalid expression or operation not allowed.");
+            }
+        }
+    } catch (error) {
+        console.error('Error processing message:', error);
+        if (isEval) {
+            await say("An error occurred while processing the expression.");
+        }
+    }
+}
+
 app.message(/^(?!!)[^!].*$/, async ({message, say, client}) => {
     if (message.channel !== process.env.COUNTING_GAME_CHANNEL_ID) return;
 
@@ -39,7 +59,7 @@ app.message(/^(?!!)[^!].*$/, async ({message, say, client}) => {
     lock.acquire('messageProcessing', async (done) => {
         while (messageQueue.length > 0) {
             const {message, say, client} = messageQueue.shift();
-            await processMessage(message, say, client);
+            await processAndRespond(message, say, client);
         }
         done();
     }, (err, ret) => {
@@ -47,6 +67,16 @@ app.message(/^(?!!)[^!].*$/, async ({message, say, client}) => {
             console.error('Error processing message queue:', err);
         }
     });
+});
+
+// Add the !eval command
+app.message(/^!eval (.+)$/, async ({message, say, client, context}) => {
+    if (message.channel !== process.env.COUNTING_GAME_CHANNEL_ID) return;
+
+    const evalExpression = context.matches[1].trim();
+    const evalMessage = {...message, text: evalExpression};
+
+    await processAndRespond(evalMessage, say, client, true);
 });
 
 app.command('/counting-stats', async ({command, ack, say, client}) => {
