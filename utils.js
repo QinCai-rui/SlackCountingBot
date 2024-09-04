@@ -5,7 +5,18 @@ async function getStatsMessage(client, stats) {
 
     message += `Highest count: ${stats.highestCount}\n`;
     if (stats.highestCountTimestamp) {
-        message += `Achieved on: ${new Date(stats.highestCountTimestamp).toLocaleString()}\n`;
+        const date = new Date(stats.highestCountTimestamp);
+        const options = {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+            timeZone: 'UTC'
+        };
+        message += `Achieved on: ${date.toLocaleString('en-US', options)} UTC\n`;
     }
     message += `Total successful counts: ${stats.totalSuccessfulCounts}\n\n`;
 
@@ -20,7 +31,6 @@ async function getStatsMessage(client, stats) {
             const username = userInfo.user.real_name || userInfo.user.name;
             message += `${username}: ${userStats.successful} (${userStats.unsuccessful} fails)\n`;
         } catch (error) {
-            console.error(`Error fetching user info for ${userId}:`, error);
             message += `<@${userId}>: ${userStats.successful} (${userStats.unsuccessful} fails)\n`;
         }
     }
@@ -32,7 +42,6 @@ async function getStatsMessage(client, stats) {
             const username = userInfo.user.real_name || userInfo.user.name;
             message += `${milestone}: ${username}\n`;
         } catch (error) {
-            console.error(`Error fetching user info for ${userId}:`, error);
             message += `${milestone}: <@${userId}>\n`;
         }
     }
@@ -44,7 +53,6 @@ async function getStatsMessage(client, stats) {
             const username = userInfo.user.real_name || userInfo.user.name;
             message += `${username}: ${stats.mostComplicatedOperation.expression} (Complexity: ${stats.mostComplicatedOperation.complexity})\n`;
         } catch (error) {
-            console.error(`Error fetching user info for ${stats.mostComplicatedOperation.user}:`, error);
             message += `<@${stats.mostComplicatedOperation.user}>: ${stats.mostComplicatedOperation.expression} (Complexity: ${stats.mostComplicatedOperation.complexity})\n`;
         }
     } else {
