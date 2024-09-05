@@ -6,15 +6,7 @@ const {
     evaluateExpression
 } = require('./mathOperations');
 const {calculateComplexity} = require('./complexityCalculator');
-const {
-    saveStats,
-    getStats,
-    updateStats,
-    getCurrentCount,
-    setCurrentCount,
-    getLastUser,
-    setLastUser
-} = require('./statsManager');
+const statsManager = require('./statsManager');
 
 async function processMessage(message, say, client, isEval = false) {
     if (!/^[\d+\-*/^√().\s!]+$|^.*sqrt\(.*\).*$/.test(message.text)) {
@@ -34,16 +26,16 @@ async function processMessage(message, say, client, isEval = false) {
             return `Expression: ${message.text}, Evaluated: ${number}, Complexity: ${complexity}`;
         }
 
-        const stats = getStats();
+        const stats = statsManager.getStats();
         if (complexity > stats.mostComplicatedOperation.complexity) {
-            updateStats({
+            statsManager.updateStats({
                 mostComplicatedOperation: {
                     expression: message.text,
                     user: message.user,
                     complexity: complexity
                 }
             });
-            await saveStats();
+            await statsManager.saveStats();
         }
 
     } catch (error) {
@@ -54,7 +46,7 @@ async function processMessage(message, say, client, isEval = false) {
         return;
     }
 
-    const stats = getStats();
+    const stats = statsManager.getStats();
     if (!stats.userStats[message.user]) {
         stats.userStats[message.user] = {
             successful: 0,
@@ -62,11 +54,11 @@ async function processMessage(message, say, client, isEval = false) {
             totalComplexity: 0,
             countWithComplexity: 0
         };
-        updateStats({userStats: stats.userStats});
+        statsManager.updateStats({userStats: stats.userStats});
     }
 
-    const lastUser = getLastUser();
-    let currentCount = getCurrentCount();
+    const lastUser = statsManager.getLastUser();
+    let currentCount = statsManager.getCurrentCount();
 
     if (message.user === lastUser) {
         await handleIncorrectCount(message, say, client, "You can't count twice in a row.");
@@ -82,18 +74,18 @@ async function processMessage(message, say, client, isEval = false) {
 
 async function handleIncorrectCount(message, say, client, reason) {
     await say(`<@${message.user}> messed up! ${reason} The count resets to 1.`);
-    setCurrentCount(1);
-    updateStats({currentCount: 1});
-    setLastUser(null);
-    const stats = getStats();
+    statsManager.setCurrentCount(1);
+    statsManager.updateStats({currentCount: 1});
+    statsManager.setLastUser(null);
+    const stats = statsManager.getStats();
     stats.userStats[message.user].unsuccessful++;
-    updateStats({userStats: stats.userStats});
+    statsManager.updateStats({userStats: stats.userStats});
     await client.reactions.add({
         channel: message.channel,
         timestamp: message.ts,
         name: 'x'
     });
-    await saveStats();
+    await statsManager.saveStats();
 }
 
 async function handleCorrectCount(message, say, client, number, complexity) {
@@ -108,7 +100,7 @@ async function handleCorrectCount(message, say, client, number, complexity) {
         await checkAndHandleMilestones(message, say, number);
 
         updateGameState(message.user, number, complexity);
-        await saveStats();
+        await statsManager.saveStats();
     } catch (error) {
         console.error(error);
     }
@@ -157,9 +149,9 @@ async function checkAndHandleMilestones(message, say, number) {
     ];
 
     if (number % 100 === 0 || specialMilestones.includes(number)) {
-        const stats = getStats();
+        const stats = statsManager.getStats();
         stats.milestones[number] = message.user;
-        updateStats({milestones: stats.milestones});
+        statsManager.updateStats({milestones: stats.milestones});
 
         const emoji = getReactionEmoji(number);
         const unicodeEmoji = getUnicodeEmoji(emoji);
@@ -190,13 +182,13 @@ function getUnicodeEmoji(shortcode) {
 }
 
 function updateGameState(user, number, complexity) {
-    const stats = getStats();
-    let currentCount = getCurrentCount();
+    const stats = statsManager.getStats();
+    let currentCount = statsManager.getCurrentCount();
 
     currentCount++;
-    setCurrentCount(currentCount);
-    updateStats({currentCount: currentCount});
-    setLastUser(user);
+    statsManager.setCurrentCount(currentCount);
+    statsManager.updateStats({currentCount: currentCount});
+    statsManager.setLastUser(user);
     stats.totalSuccessfulCounts++;
     stats.userStats[user].successful++;
     stats.userStats[user].totalComplexity += complexity;
@@ -205,7 +197,7 @@ function updateGameState(user, number, complexity) {
         stats.highestCount = currentCount - 1;
         stats.highestCountTimestamp = new Date().toISOString();
     }
-    updateStats(stats);
+    statsManager.updateStats(stats);
 
     // Track prime numbers
     if (isPrime(currentCount - 1)) {
@@ -217,7 +209,7 @@ function updateGameState(user, number, complexity) {
         stats.userStats[user].perfectSquares = (stats.userStats[user].perfectSquares || 0) + 1;
     }
 
-    updateStats({userStats: stats.userStats});
+    statsManager.updateStats({userStats: stats.userStats});
 }
 
 module.exports = {
