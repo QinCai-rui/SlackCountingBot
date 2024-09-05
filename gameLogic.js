@@ -118,6 +118,7 @@ function getReactionEmoji(number) {
     switch (number) {
         case 42: return 'rocket';
         case 69: return 'cancer';
+        case 123: return '1234';
         case 314: return 'pie';
         case 420: return 'herb';
         case 666: return 'smiling_imp';
@@ -140,6 +141,7 @@ async function checkAndHandleMilestones(message, say, number) {
     const specialMilestones = [
         42,    // The Answer to Life, the Universe, and Everything
         69,    // Nice
+        123,  // Sequential numbers
         314,   // Pi
         420,   // Herb
         666,   // Devil's number
@@ -160,8 +162,31 @@ async function checkAndHandleMilestones(message, say, number) {
         updateStats({milestones: stats.milestones});
 
         const emoji = getReactionEmoji(number);
-        await say(`${emoji} Congratulations <@${message.user}>! You've reached ${number}! ${emoji}`);
+        const unicodeEmoji = getUnicodeEmoji(emoji);
+        await say(`${unicodeEmoji} Congratulations <@${message.user}>! You've reached ${number}! ${unicodeEmoji}`);
     }
+}
+
+function getUnicodeEmoji(shortcode) {
+    const emojiMap = {
+        'rocket': '🚀',
+        'cancer': '♋',
+        'pie': '🥧',
+        'herb': '🌿',
+        'smiling_imp': '😈',
+        'four_leaf_clover': '🍀',
+        'fireworks': '🎆',
+        '1234': '🔢',
+        'computer': '💻',
+        'jigsaw': '🧩',
+        'abacus': '🧮',
+        'raised_hand_with_fingers_splayed': '🖐️',
+        'muscle': '💪',
+        'white_check_mark': '✅',
+        '💯': '💯'
+    };
+
+    return emojiMap[shortcode] || shortcode;
 }
 
 function updateGameState(user, number, complexity) {
@@ -197,7 +222,8 @@ function updateGameState(user, number, complexity) {
 
 module.exports = {
     processMessage,
-    getReactionEmoji,  // Add this line
+    getReactionEmoji,
     checkAndHandleMilestones,
-    updateGameState
+    updateGameState,
+    getUnicodeEmoji
 };

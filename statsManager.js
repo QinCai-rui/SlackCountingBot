@@ -1,114 +1,108 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const STATS_FILE = path.join(__dirname, 'counting_stats.json');
-
-let stats = {
-    highestCount: 1,
-    highestCountTimestamp: null,
-    totalSuccessfulCounts: 0,
-    currentCount: 1,
-    milestones: {},
-    userStats: {},
-    mostComplicatedOperation: {
-        expression: '',
-        user: null,
-        complexity: 0
-    }
-};
-
-let currentCount = 1;
-let lastUser = null;
-
-async function loadStats() {
-    try {
-        const data = await fs.readFile(STATS_FILE, 'utf8');
-        const loadedStats = JSON.parse(data);
-        stats = {
-            ...loadedStats,
-            mostComplicatedOperation: loadedStats.mostComplicatedOperation || {
+class StatsManager {
+    constructor(config = {}, fileSystem = fs) {
+        this.config = {
+            statsFile: path.join(__dirname, 'counting_stats.json'),
+            ...config
+        };
+        this.fs = fileSystem;
+        this.stats = {
+            highestCount: 1,
+            highestCountTimestamp: null,
+            totalSuccessfulCounts: 0,
+            currentCount: 1,
+            milestones: {},
+            userStats: {},
+            mostComplicatedOperation: {
                 expression: '',
                 user: null,
                 complexity: 0
-            },
-            userStats: Object.fromEntries(
-                Object.entries(loadedStats.userStats || {}).map(([userId, userStat]) => [
-                    userId,
-                    {
-                        ...userStat,
-                        totalComplexity: userStat.totalComplexity || 0,
-                        countWithComplexity: userStat.countWithComplexity || 0
-                    }
-                ])
-            )
+            }
         };
-        currentCount = loadedStats.currentCount || 1;
-        lastUser = loadedStats.lastUser || null;
-        console.log('Stats loaded successfully');
-    } catch (error) {
-        if (error.code === 'ENOENT') {
-            stats = {
-                highestCount: 1,
-                totalSuccessfulCounts: 0,
-                currentCount: 1,
-                milestones: {},
-                userStats: {},
-                mostComplicatedOperation: {
+        this.currentCount = this.stats.currentCount;
+        this.lastUser = null;
+        // Remove this.currentCount
+    }
+
+    async loadStats() {
+        try {
+            const data = await this.fs.readFile(this.config.statsFile, 'utf8');
+            const loadedStats = JSON.parse(data);
+            this.stats = {
+                ...loadedStats,
+                mostComplicatedOperation: loadedStats.mostComplicatedOperation || {
                     expression: '',
                     user: null,
                     complexity: 0
-                }
+                },
+                userStats: Object.fromEntries(
+                    Object.entries(loadedStats.userStats || {}).map(([userId, userStat]) => [
+                        userId,
+                        {
+                            ...userStat,
+                            totalComplexity: userStat.totalComplexity || 0,
+                            countWithComplexity: userStat.countWithComplexity || 0
+                        }
+                    ])
+                )
             };
-        } else {
-            console.error('Error loading stats:', error);
+            this.currentCount = loadedStats.currentCount || 1;
+            this.lastUser = loadedStats.lastUser || null;
+            console.log('Stats loaded successfully');
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                console.log('No existing stats file found. Starting with default stats.');
+            } else {
+                console.error('Error loading stats:', error);
+            }
         }
     }
-}
 
-async function saveStats() {
-    try {
-        const dataToSave = {
-            ...stats,
-            currentCount: currentCount,
-            lastUser: lastUser
-        };
-        await fs.writeFile(STATS_FILE, JSON.stringify(dataToSave, null, 2));
-    } catch (error) {
-        console.error('Error saving stats:', error);
+    async saveStats() {
+        try {
+            const dataToSave = {
+                ...this.stats,
+                currentCount: this.currentCount,
+                lastUser: this.lastUser
+            };
+            await this.fs.writeFile(this.config.statsFile, JSON.stringify(dataToSave, null, 2));
+        } catch (error) {
+            console.error('Error saving stats:', error);
+        }
+    }
+
+    getStats() {
+        return this.stats;
+    }
+
+    updateStats(newStats) {
+        this.stats = {...this.stats, ...newStats};
+    }
+
+    getCurrentCount() {
+        return this.stats.currentCount;
+    }
+
+    setCurrentCount(count) {
+        this.currentCount = count;
+        this.stats.currentCount = count;
+    }
+
+    getLastUser() {
+        return this.lastUser;
+    }
+
+    setLastUser(user) {
+        this.lastUser = user;
     }
 }
 
-function getStats() {
-    return stats;
-}
+// Create and export a singleton instance
+const statsManager = new StatsManager();
 
-function updateStats(newStats) {
-    stats = {...stats, ...newStats};
-}
+module.exports = statsManager;
 
-function getCurrentCount() {
-    return currentCount;
-}
-
-function setCurrentCount(count) {
-    currentCount = count;
-}
-
-function getLastUser() {
-    return lastUser;
-}
-
-function setLastUser(user) {
-    lastUser = user;
-}
-
-module.exports = {
-    loadStats,
-    saveStats,
-    getStats,
-    updateStats,
-    getCurrentCount,
-    setCurrentCount,
-    getLastUser,
-    setLastUser
-};
+// Also export the class for testing purposes
+module.exports.StatsManager = StatsManager;

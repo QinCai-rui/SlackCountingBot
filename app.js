@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const {App, ExpressReceiver} = require('@slack/bolt');
 const {getStatsMessage, getHelpMessage} = require('./utils');
-const {loadStats, getStats} = require('./statsManager');
+const statsManager = require('./statsManager');
 const {processMessage} = require('./gameLogic');
 const AsyncLock = require('async-lock');
 
@@ -81,7 +81,7 @@ app.message(/^!eval (.+)$/, async ({message, say, client, context}) => {
 
 app.command('/counting-stats', async ({command, ack, say, client}) => {
     await ack();
-    const statsMessage = await getStatsMessage(client, getStats());
+    const statsMessage = await getStatsMessage(client, statsManager.getStats());
     await say(statsMessage);
 });
 
@@ -98,13 +98,13 @@ app.message('!help', async ({message, say}) => {
 
 app.message('!stats', async ({message, say, client}) => {
     if (message.channel === process.env.COUNTING_GAME_CHANNEL_ID) {
-        const statsMessage = await getStatsMessage(client, getStats());
+        const statsMessage = await getStatsMessage(client, statsManager.getStats());
         await say(statsMessage);
     }
 });
 
 (async () => {
-    await loadStats();
+    await statsManager.loadStats();
     await app.start(process.env.PORT || 3000);
     console.log('⚡️ Counting game bot is running!');
 })();
