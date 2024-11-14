@@ -134,3 +134,5 @@ counting_stats.json
 
 # Backups
 *.backup
+
+bun.lockb
