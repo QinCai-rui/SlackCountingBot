@@ -73,8 +73,10 @@ async function processMessage(message, say, client, isEval = false) {
 }
 
 async function handleIncorrectCount(message, say, client, reason) {
-    const currentCount = statsManager.getCurrentCount();
-    await say(`<@${message.user}> messed up! ${reason} The count continues at ${currentCount}!`);
+    await say(`<@${message.user}> messed up! ${reason} The count resets to 1.`);
+    statsManager.setCurrentCount(1);
+    statsManager.updateStats({currentCount: 1});
+    statsManager.setLastUser(null);
     const stats = statsManager.getStats();
     stats.userStats[message.user].unsuccessful++;
     statsManager.updateStats({userStats: stats.userStats});

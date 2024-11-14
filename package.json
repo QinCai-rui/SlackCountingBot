@@ -13,7 +13,9 @@
     "@slack/bolt": "^3.21.1",
     "async-lock": "^1.4.1",
     "dotenv": "^16.4.5",
-    "mathjs": "^13.1.1"
+    "forever": "^4.0.3",
+    "mathjs": "^13.1.1",
+    "pm2": "^5.4.3"
   },
   "devDependencies": {
     "jest": "^29.7.0"
