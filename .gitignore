@@ -131,3 +131,6 @@ dist
 
 #project specific
 counting_stats.json
+
+# Backups
+*.backup
