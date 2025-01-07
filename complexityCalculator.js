@@ -4,6 +4,12 @@ function calculateComplexity(expression) {
     const uniqueOperators = new Set(operators);
     const uniqueOperands = new Set(operands);
 
+    // Include sqrt() and math.cbrt() in the complexity calculation
+    const sqrtPattern = /sqrt\(/g;
+    const sqrtCount = (expression.match(sqrtPattern) || []).length;
+    const cbrtPattern = /math\.cbrt\(/g;
+    const cbrtCount = (expression.match(cbrtPattern) || []).length;
+
     // Penalize for trivial operations like x^0 or 0*x
     const trivialPowerPattern = /\b\d+\s*\^\s*0\b/;
     const trivialMultiplyPattern = /\b0\s*\*\s*\d+\b/;
@@ -20,8 +26,8 @@ function calculateComplexity(expression) {
         return 1;
     }
 
-    // Calculate complexity based on unique operands and operators
-    let complexity = uniqueOperands.size + uniqueOperators.size * 2;
+    // Calculate complexity based on unique operands, operators, sqrt count, and cbrt count
+    let complexity = uniqueOperands.size + uniqueOperators.size * 2 + sqrtCount * 2 + cbrtCount * 2;
 
     // Penalize for excessive operands
     const MAX_OPERANDS = 35;
@@ -30,8 +36,8 @@ function calculateComplexity(expression) {
     }
 
     // Adjust complexity for simple expressions
-    if (uniqueOperators.size === 1 && uniqueOperands.size === 2) {
-        complexity = 3;
+    if (uniqueOperators.size === 1 && uniqueOperands.size === 2 && sqrtCount === 0 && cbrtCount === 0) {
+        complexity = 2;
     }
 
     console.log('Expression:', expression, 'Complexity:', complexity);
