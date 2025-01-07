@@ -8,21 +8,10 @@ A fun and interactive Slack bot that manages a collaborative counting game. Play
 - Support for complex mathematical expressions
 - User stats tracking (successful counts, accuracy, average complexity)
 - Milestones and achievements
-- Role-based rewards (coming soon)
-- Leaderboards (coming soon)
-
-## Inspiration
-
-This project was inspired by the Discord Counting Bot created by supercrafter100. You can check out their bot at [https://countingbot.supercrafter100.com/](https://countingbot.supercrafter100.com/). While our bot shares similar core concepts, it has been built from the ground up for Slack and includes unique features like support for complex mathematical expressions.
 
 ## Development
 
-This bot was developed as an experiment to test the capabilities of [Cursor](https://www.cursor.so/), an AI-powered coding assistant. All code for this project has been written with the assistance of Cursor, showcasing the potential of AI in software development.
-
-To learn more about Cursor:
-- Visit the [Cursor website](https://www.cursor.so/)
-- Check out the [Cursor blog](https://www.cursor.so/blog)
-- Follow Cursor on [Twitter](https://twitter.com/cursordev)
+This bot is a fork of https://github.com/carmex/SlackCountingBot, which was developed as an experiment to test the capabilities of [Cursor](https://www.cursor.so/), an AI-powered coding assistant. However, this fork is not made by Cursor. I made quite a lot of changes to the game logic etc.
 
 ## Getting Started
 
@@ -30,7 +19,7 @@ To set up and run the Slack Counting Game Bot, follow these steps:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/carmex/SlackCountingBot.git
+   git clone https://github.com/QinCai-rui/SlackCountingBot.git
    cd SlackCountingBot
    ```
 
