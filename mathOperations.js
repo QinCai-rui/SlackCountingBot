@@ -19,17 +19,12 @@ function isPrime(num) {
 }
 
 function parseExpression(expression) {
-    // Replace √ with sqrt, handling both √n and √(...)
     expression = expression.replace(/√(\d+)/g, 'sqrt($1)').replace(/√/g, 'sqrt');
-    
-    // Replace ∛ (cube root) with math.cbrt
-    expression = expression.replace(/∛(\d+)/g, 'math.cbrt($1)').replace(/∛/g, 'math.cbrt');
-
-    // Replace factorials with a function call
+    expression = expression.replace(/∛(\d+)/g, 'cbrt($1)').replace(/∛/g, 'cbrt');
     expression = expression.replace(/(\d+)!/g, 'factorial($1)');
-
     return expression;
 }
+
 
 function simplifyExpression(expression) {
     if (expression.length > 1000) {
