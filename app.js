@@ -36,19 +36,17 @@ async function processAndRespond(message, say, client, isEval = false) {
     try {
         const result = await processMessage(message, say, client, isEval);
         if (isEval) {
-            // For !eval, we want to return the result explicitly
+            // For !eval, return the result explicitly to be handled by the calling function
             if (result) {
-                await say(result);
+                return result;  // Return the result instead of calling say()
             } else {
-                await say("Invalid expression or operation not allowed.");
+                return "Invalid expression or operation not allowed.";
             }
         }
     } catch (error) {
         console.error('Error processing message:', error);
         if (isEval) {
-            await say("An error occurred while processing the expression.");
-            await say(error);    // Prints the error in te counting channel
-            // TODO: send the error in slack codeblock for better readability
+            return `An error occurred while processing the expression.\n\`\`\`${error}\`\`\``;
         }
     }
 }
@@ -131,7 +129,14 @@ app.message(/^!eval (.+)$/, async ({message, say, client, context}) => {
     const evalExpression = context.matches[1].trim();
     const evalMessage = {...message, text: evalExpression};
 
-    await processAndRespond(evalMessage, say, client, true);
+    const result = await processAndRespond(evalMessage, say, client, true);
+    if (result) {
+        await client.chat.postEphemeral({
+            channel: message.channel,
+            user: message.user,
+            text: result
+        });
+    }
 });
 
 (async () => {
