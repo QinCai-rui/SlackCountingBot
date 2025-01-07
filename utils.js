@@ -32,23 +32,23 @@ async function getStatsMessage(client, stats) {
             const avgComplexity = userStats.countWithComplexity > 0
                 ? (userStats.totalComplexity / userStats.countWithComplexity).toFixed(2)
                 : 'N/A';
-            message += `${username}: ${userStats.successful} (${userStats.unsuccessful} fails, Avg Complexity: ${avgComplexity}`;
+            message += `<@${userId}>: ${userStats.successful} (${userStats.unsuccessful} fails, Avg Complexity: ${avgComplexity}`;
             if (userStats.primes) message += `, Primes: ${userStats.primes}`;
             if (userStats.perfectSquares) message += `, Perfect Squares: ${userStats.perfectSquares}`;
             message += ')\n';
         } catch (error) {
-            message += `<@${userId}>: ${userStats.successful} (${userStats.unsuccessful} fails)\n`;
+            message += `${username}: ${userStats.successful} (${userStats.unsuccessful} fails)\n`;
         }
     }
-
+    
     message += '\n🎯 Milestones:\n';
     for (const [milestone, userId] of Object.entries(stats.milestones)) {
         try {
             const userInfo = await client.users.info({user: userId});
             const username = userInfo.user.username || userInfo.user.name;
-            message += `${milestone}: ${username}\n`;
-        } catch (error) {
             message += `${milestone}: <@${userId}>\n`;
+        } catch (error) {
+            message += `${milestone}: ${username}>\n`;
         }
     }
 
@@ -57,9 +57,9 @@ async function getStatsMessage(client, stats) {
         try {
             const userInfo = await client.users.info({user: stats.mostComplicatedOperation.user});
             const username = userInfo.user.username || userInfo.user.name;
-            message += `${username}: ${stats.mostComplicatedOperation.expression} (Complexity: ${stats.mostComplicatedOperation.complexity})\n`;
-        } catch (error) {
             message += `<@${stats.mostComplicatedOperation.user}>: ${stats.mostComplicatedOperation.expression} (Complexity: ${stats.mostComplicatedOperation.complexity})\n`;
+        } catch (error) {
+            message += `${username}>: ${stats.mostComplicatedOperation.expression} (Complexity: ${stats.mostComplicatedOperation.complexity})\n`;
         }
     } else {
         message += 'No complicated operations yet!\n';
@@ -88,8 +88,9 @@ You can use basic math operations to represent numbers:
 • Square roots and cube roots: √9 or sqrt(9), cbrt(27)
 
 Commands:
-• !stats - View game statistics
-• !help - Show this help message
+• !stats or /counting-stats - View game statistics
+• !help or /counting-help - Show this help message
+• !eval [expression] or /eval [expression] - Evaluate an expression
 
 Have fun counting! 🎉
     `;
