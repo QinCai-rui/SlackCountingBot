@@ -72,25 +72,39 @@ app.message(/^(?!!)[^!].*$/, async ({message, say, client}) => {
     });
 });
 
-// Add the !eval command
-app.message(/^!eval (.+)$/, async ({message, say, client, context}) => {
-    if (message.channel !== process.env.COUNTING_GAME_CHANNEL_ID) return;
-
-    const evalExpression = context.matches[1].trim();
-    const evalMessage = {...message, text: evalExpression};
-
-    await processAndRespond(evalMessage, say, client, true);
-});
 
 app.command('/counting-stats', async ({command, ack, say, client}) => {
     await ack();
     const statsMessage = await getStatsMessage(client, statsManager.getStats());
-    await say(statsMessage);
+    await client.chat.postEphemeral({
+        channel: command.channel_id,
+        user: command.user_id,
+        text: statsMessage
+    });
 });
 
-app.command('/counting-help', async ({command, ack, say}) => {
+app.command('/counting-help', async ({command, ack, say, client}) => {
     await ack();
-    await say(getHelpMessage());
+    await client.chat.postEphemeral({
+        channel: command.channel_id,
+        user: command.user_id,
+        text: getHelpMessage()
+    });
+});
+
+app.command('/counting-eval', async ({command, ack, say, client}) => {
+    await ack();
+    const evalExpression = command.text.trim(); // The expression to evaluate
+    const evalMessage = {text: evalExpression, user: command.user_id};
+
+    const result = await processAndRespond(evalMessage, say, client, true);
+    if (result) {
+        await client.chat.postEphemeral({
+            channel: command.channel_id,
+            user: command.user_id,
+            text: result
+        });
+    }
 });
 
 app.message('!help', async ({message, say}) => {
@@ -102,8 +116,22 @@ app.message('!help', async ({message, say}) => {
 app.message('!stats', async ({message, say, client}) => {
     if (message.channel === process.env.COUNTING_GAME_CHANNEL_ID) {
         const statsMessage = await getStatsMessage(client, statsManager.getStats());
-        await say(statsMessage);
+        await client.chat.postEphemeral({
+            channel: message.channel,
+            user: message.user,
+            text: statsMessage
+        });
     }
+});
+
+// Add the !eval command
+app.message(/^!eval (.+)$/, async ({message, say, client, context}) => {
+    if (message.channel !== process.env.COUNTING_GAME_CHANNEL_ID) return;
+
+    const evalExpression = context.matches[1].trim();
+    const evalMessage = {...message, text: evalExpression};
+
+    await processAndRespond(evalMessage, say, client, true);
 });
 
 (async () => {
