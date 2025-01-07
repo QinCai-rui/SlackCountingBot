@@ -5,13 +5,13 @@ A fun and interactive Slack bot that manages a collaborative counting game. Play
 ## Features
 
 - Start counting from any number
-- Support for complex mathematical expressions
+- Support for complex mathematical expressions (addition, subtraction, multiplication, division, exponentiation, square roots, and cube roots)
 - User stats tracking (successful counts, accuracy, average complexity)
 - Milestones and achievements
 
 ## Development
 
-This bot is a fork of https://github.com/carmex/SlackCountingBot, which was developed as an experiment to test the capabilities of [Cursor](https://www.cursor.so/), an AI-powered coding assistant. However, this fork is not made by Cursor. I made quite a lot of changes to the game logic etc.
+This bot is a fork of [SlackCountingBot](https://github.com/carmex/SlackCountingBot), which was developed as an experiment to test the capabilities of [Cursor](https://www.cursor.so/), an AI-powered coding assistant. However, this fork is independently maintained and includes significant changes to the game logic and features.
 
 ## Getting Started
 
@@ -29,8 +29,8 @@ To set up and run the Slack Counting Game Bot, follow these steps:
    ```
 
 3. Create a Slack App:
-   - Go to [https://api.slack.com/apps](https://api.slack.com/apps) and create a new app
-   - Add the necessary bot scopes (e.g., chat:write, reactions:write)
+   - Go to [Slack API Apps](https://api.slack.com/apps) and create a new app
+   - Add the necessary bot scopes (e.g., `chat:write`, `reactions:write`)
    - Install the app to your workspace
 
 4. Set up environment variables:
@@ -47,9 +47,22 @@ To set up and run the Slack Counting Game Bot, follow these steps:
    node app.js
    ```
 
-6. Invite the bot to your designated counting channel in Slack
+6. Invite the bot to your designated counting channel in Slack.
 
 7. Start counting!
+
+## Game Rules
+
+1. **No Bots:** Only humans can play!
+2. **One Number at a Time:** Each person can only count once in a row.
+3. **Continuity:** If someone makes a mistake, the count continues without resetting.
+4. **Mathematical Expressions:** Users can use basic and complex mathematical operations to represent numbers (e.g., `2+3`, `sqrt(36)`, `2^3`, `cbrt(27)`).
+
+## Commands
+
+- **`/counting-help` or `!help`:** Shows the rules and commands for the game.
+- **`/counting-stats` or `!stats`:** Displays current game statistics, such as highest count, total counts, and top counters.
+- **`/counting-eval [expression]`:** Evaluates a mathematical expression privately.
 
 ## Contributing
 
@@ -59,9 +72,4 @@ We welcome contributions to this project! If you have any ideas or suggestions, 
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
 
-This license ensures that the software remains free and open source. It allows you to use, modify, and distribute the code, but any modifications or larger works based on this project must also be released under the same license.
-
-## Acknowledgements
-
-- [Discord Counting Bot](https://countingbot.supercrafter100.com/) by supercrafter100 for the inspiration
-- [Cursor](https://www.cursor.so/) for assisting in the development of this project
+This license ensures that the software remains free and open-source. It allows you to use, modify, and distribute the code, but any modifications or larger works based on this project must also be released under the same license.
