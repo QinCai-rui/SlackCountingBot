@@ -25,7 +25,7 @@ To set up and run the Slack Counting Game Bot, follow these steps:
 
 2. Install dependencies:
    ```bash
-   npm install
+   bun install
    ```
 
 3. Create a Slack App:
