@@ -13,8 +13,8 @@ async function getStatsMessage(client, stats) {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
-            hour12: true,
-            timeZone: 'UTC'
+            hour12: false,  // Use 24-hour clock
+            timeZone: 'UTC' // Use the UTC+0 timezone
         };
         message += `Achieved on: ${date.toLocaleString('en-US', options)} UTC\n`;
     }
@@ -74,8 +74,10 @@ function getHelpMessage() {
 
 Rules:
 1. Count up from 1, one number at a time.
-2. Each person can only count once in a row.
-3. If someone makes a mistake, the count resets to 1.
+2. Base 10.
+3. NO BOTS ALLOWED!!!
+4. Each person can only count once in a row.
+5. If someone makes a mistake, the count continues without resetting.
 
 You can use basic math operations to represent numbers:
 • Addition: 2+3
@@ -83,7 +85,7 @@ You can use basic math operations to represent numbers:
 • Multiplication: 4*3
 • Division: 15/3
 • Exponents: 2^3
-• Square roots: √9 or sqrt(9)
+• Square roots and cube roots: √9 or sqrt(9), cbrt(27)
 
 Commands:
 • !stats - View game statistics

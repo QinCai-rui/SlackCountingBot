@@ -7,6 +7,7 @@ const {
 } = require('./mathOperations');
 const {calculateComplexity} = require('./complexityCalculator');
 const statsManager = require('./statsManager');
+const { range, hasNumericValueDependencies, detDependencies, e, equalText } = require('mathjs');
 
 async function processMessage(message, say, client, isEval = false) {
     if (!/^[\d+\-*/^√().\s!]+$|^.*sqrt\(.*\).*$/.test(message.text)) {
@@ -101,6 +102,8 @@ async function handleCorrectCount(message, say, client, number, complexity) {
         await statsManager.saveStats();
     } catch (error) {
         console.error(error);
+        await say(error)
+        // TODO send the error to slack using code bock for better readability
     }
 }
 
@@ -120,7 +123,9 @@ function getReactionEmoji(number) {
         case 3141: return 'abacus';
         case 5000: return 'raised_hand_with_fingers_splayed';
         case 9000: return 'muscle';
+        case 9999: return 'muscle';
         case 12345: return '1234';
+        case 31415: return 'pie';
         default:
             if (number % 100 === 0) return '💯';
             return 'white_check_mark';
@@ -131,7 +136,7 @@ async function checkAndHandleMilestones(message, say, number) {
     const specialMilestones = [
         42,    // The Answer to Life, the Universe, and Everything
         69,    // Nice
-        123,  // Sequential numbers
+        123,   // Sequential numbers
         314,   // Pi
         420,   // Herb
         666,   // Devil's number
@@ -143,7 +148,9 @@ async function checkAndHandleMilestones(message, say, number) {
         3141,  // More digits of Pi
         5000,  // Another big milestone
         9000,  // It's over 9000!
-        12345  // More sequential numbers
+        9999,  // Close to 10000
+        12345, // More sequential numbers
+        31415  // MORE Pi!!
     ];
 
     if (number % 100 === 0 || specialMilestones.includes(number)) {
@@ -184,17 +191,23 @@ function updateGameState(user, number, complexity) {
     let currentCount = statsManager.getCurrentCount();
 
     currentCount++;
+
+    // Updates game-wide stats
     statsManager.setCurrentCount(currentCount);
     statsManager.updateStats({currentCount: currentCount});
     statsManager.setLastUser(user);
     stats.totalSuccessfulCounts++;
+
+    // Updates stats for specific user
     stats.userStats[user].successful++;
     stats.userStats[user].totalComplexity += complexity;
     stats.userStats[user].countWithComplexity++;
+
     if (currentCount > stats.highestCount) {
         stats.highestCount = currentCount - 1;
         stats.highestCountTimestamp = new Date().toISOString();
     }
+
     statsManager.updateStats(stats);
 
     // Track prime numbers

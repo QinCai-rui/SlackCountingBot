@@ -5,6 +5,7 @@ const {getStatsMessage, getHelpMessage} = require('./utils');
 const statsManager = require('./statsManager');
 const {processMessage} = require('./gameLogic');
 const AsyncLock = require('async-lock');
+const { i, detDependencies, efimovFactorDependencies, kron } = require('mathjs');
 
 // Create a custom receiver
 const receiver = new ExpressReceiver({
@@ -18,7 +19,7 @@ const app = new App({
     receiver
 });
 
-// Handle the challenge request
+// Handle the challenge request (Slack APP verification)
 receiver.router.post('/', (req, res) => {
     if (req.body.type === 'url_verification') {
         res.send(req.body.challenge);
@@ -46,6 +47,8 @@ async function processAndRespond(message, say, client, isEval = false) {
         console.error('Error processing message:', error);
         if (isEval) {
             await say("An error occurred while processing the expression.");
+            await say(error);    // Prints the error in te counting channel
+            // TODO: send the error in slack codeblock for better readability
         }
     }
 }
