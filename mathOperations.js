@@ -22,8 +22,8 @@ function parseExpression(expression) {
     // Replace √ with sqrt, handling both √n and √(...)
     expression = expression.replace(/√(\d+)/g, 'sqrt($1)').replace(/√/g, 'sqrt');
     
-    // Replace ∛ (cube root) with cbrt
-    expression = expression.replace(/∛(\d+)/g, 'cbrt($1)').replace(/∛/g, 'cbrt');
+    // Replace ∛ (cube root) with math.cbrt
+    expression = expression.replace(/∛(\d+)/g, 'math.cbrt($1)').replace(/∛/g, 'math.cbrt');
 
     // Replace factorials with a function call
     expression = expression.replace(/(\d+)!/g, 'factorial($1)');
@@ -59,7 +59,7 @@ function evaluateExpression(parsedExpression) {
     return new Promise((resolve, reject) => {
         const timeoutId = setTimeout(() => reject(new Error("Evaluation timed out")), 5000);
         try {
-            const scope = {factorial, sqrt: Math.sqrt};
+            const scope = {factorial, sqrt: Math.sqrt, cbrt: Math.cbrt};  // Include cbrt in the scope
             const result = math.evaluate(parsedExpression, scope);
             clearTimeout(timeoutId);
             resolve(result);
