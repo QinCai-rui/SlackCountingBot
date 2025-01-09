@@ -36,7 +36,7 @@ function calculateComplexity(expression) {
     }
 
     // Adjust complexity for simple expressions
-    if (uniqueOperators.size === 1 && uniqueOperands.size === 2 && sqrtCount === 0 && cbrtCount === 0) {
+    if (uniqueOperators.size === 0 && uniqueOperands.size === 1 && sqrtCount === 0 && cbrtCount === 0) {
         complexity = 2;
     }
 
