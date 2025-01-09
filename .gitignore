@@ -135,4 +135,5 @@ counting_stats.json
 # Backups
 *.backup
 
+# Bun lockfile
 bun.lockb
