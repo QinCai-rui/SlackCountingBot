@@ -10,7 +10,7 @@ const statsManager = require('./statsManager');
 const { range, hasNumericValueDependencies, detDependencies, e, equalText } = require('mathjs');
 
 async function processMessage(message, say, client, isEval = false) {
-    if (!/^[\d+\-*/^√().\s!]+$|^.*sqrt\(.*\).*$/.test(message.text)) {
+    if (!/^[\d+\-*/^√∛().\s!]+$|^.*sqrt\(.*\)|.*cbrt\(.*\).*$/.test(message.text)) {
         return;
     }
 

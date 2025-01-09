@@ -51,7 +51,7 @@ function evaluateExpression(parsedExpression) {
     return new Promise((resolve, reject) => {
         const timeoutId = setTimeout(() => reject(new Error("Evaluation timed out")), 5000);
         try {
-            const scope = {factorial, sqrt: Math.sqrt, cbrt: Math.cbrt};
+            const scope = { factorial, sqrt: Math.sqrt, cbrt: Math.cbrt };
             const result = math.evaluate(parsedExpression, scope);
             clearTimeout(timeoutId);
             resolve(result);
