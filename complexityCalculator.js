@@ -1,13 +1,13 @@
 function calculateComplexity(expression) {
-    const operators = expression.match(/[\+\-\*\/\^\√]/g) || [];
+    const operators = expression.match(/[\+\-\*\/\^\√∛]/g) || [];  // Include ∛ (cbrt) in the operators pattern
     const operands = expression.match(/\d+/g) || [];
     const uniqueOperators = new Set(operators);
     const uniqueOperands = new Set(operands);
 
-    // Include sqrt() and math.cbrt() in the complexity calculation
+    // Include sqrt() and cbrt() in the complexity calculation
     const sqrtPattern = /sqrt\(/g;
     const sqrtCount = (expression.match(sqrtPattern) || []).length;
-    const cbrtPattern = /math\.cbrt\(/g;
+    const cbrtPattern = /cbrt\(/g;  // Adjust the pattern to match cbrt
     const cbrtCount = (expression.match(cbrtPattern) || []).length;
 
     // Penalize for trivial operations like x^0 or 0*x

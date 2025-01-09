@@ -25,7 +25,6 @@ function parseExpression(expression) {
     return expression;
 }
 
-
 function simplifyExpression(expression) {
     if (expression.length > 1000) {
         return expression;
@@ -38,12 +37,10 @@ function simplifyExpression(expression) {
     }
 
     try {
-        const preparedExpression = expression
-            .replace(/√(\d+)/g, 'sqrt($1)')
-            .replace(/√/g, 'sqrt');
+        const preparedExpression = parseExpression(expression); // Ensure we parse the expression properly
 
         const simplified = math.simplify(preparedExpression);
-        return simplified.toString().replace(/sqrt/g, '√');
+        return simplified.toString().replace(/sqrt/g, '√').replace(/cbrt/g, '∛'); // Replace function names back
     } catch (error) {
         console.error('Error simplifying expression:', error);
         return expression; // Return original expression if simplification fails
@@ -54,7 +51,7 @@ function evaluateExpression(parsedExpression) {
     return new Promise((resolve, reject) => {
         const timeoutId = setTimeout(() => reject(new Error("Evaluation timed out")), 5000);
         try {
-            const scope = {factorial, sqrt: Math.sqrt, cbrt: Math.cbrt};  // Include cbrt in the scope
+            const scope = {factorial, sqrt: Math.sqrt, cbrt: Math.cbrt};
             const result = math.evaluate(parsedExpression, scope);
             clearTimeout(timeoutId);
             resolve(result);
