@@ -1,3 +1,5 @@
+const { secDependencies, divideScalarDependencies } = require("mathjs");
+
 function calculateComplexity(expression) {
     const operators = expression.match(/[\+\-\*\/\^\√∛]/g) || [];  // Include ∛ (cbrt) in the operators pattern
     const operands = expression.match(/\d+/g) || [];
