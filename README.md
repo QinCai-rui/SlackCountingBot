@@ -39,7 +39,7 @@ To set up and run the Slack Counting Game Bot, follow these steps:
      ```bash
      SLACK_BOT_TOKEN=xoxb-your-bot-token
      SLACK_SIGNING_SECRET=your-signing-secret
-     COUNTING_GAME_CHANNEL_ID=C0123456789
+     COUNTING_GAME_CHANNEL_ID=channel-id
      ```
 
 5. Start the bot:
