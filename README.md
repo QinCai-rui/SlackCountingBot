@@ -4,7 +4,7 @@ A fun and interactive Slack bot that manages a collaborative counting game. Play
 
 ## Features
 
-- Start counting from any number
+- Start counting from 1
 - Support for complex mathematical expressions (addition, subtraction, multiplication, division, exponentiation, square roots, and cube roots)
 - User stats tracking (successful counts, accuracy, average complexity)
 - Milestones and achievements
