@@ -11,7 +11,10 @@ A fun and interactive Slack bot that manages a collaborative counting game. Play
 
 ## Development
 
-This bot is a fork of [SlackCountingBot](https://github.com/carmex/SlackCountingBot), which was developed as an experiment to test the capabilities of [Cursor](https://www.cursor.so/), an AI-powered coding assistant. However, this fork is independently maintained and includes significant changes to the game logic and features.
+
+dfg d kkh kjshdkjh kjhksd  d
+
+This bot is an actively maintained fork of [SlackCountingBot](https://github.com/carmex/SlackCountingBot), which was developed as an experiment to test the capabilities of [Cursor](https://www.cursor.so/), an AI-powered coding assistant. However, this fork is independently maintained and includes significant changes to the game logic and features.
 
 ## Getting Started
 
