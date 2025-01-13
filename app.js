@@ -28,6 +28,15 @@ receiver.router.post('/', (req, res) => {
     }
 });
 
+// Function to send error messages to the thread of the original message
+async function sendErrorToSlack(error, client, channel, thread_ts) {
+    await client.chat.postMessage({
+        channel: channel,
+        thread_ts: thread_ts,
+        text: `An error occurred: \`\`\`${error}\`\`\``
+    });
+}
+
 const lock = new AsyncLock();
 const messageQueue = [];
 
@@ -48,6 +57,8 @@ async function processAndRespond(message, say, client, isEval = false) {
         if (isEval) {
             return `An error occurred while processing the expression.\n\`\`\`${error}\`\`\``;
         }
+        // Send the error message to the thread of the original message
+        await sendErrorToSlack(error, client, message.channel, message.ts);
     }
 }
 
@@ -69,7 +80,6 @@ app.message(/^(?!!)[^!].*$/, async ({message, say, client}) => {
         }
     });
 });
-
 
 app.command('/counting-stats', async ({command, ack, say, client}) => {
     await ack();
