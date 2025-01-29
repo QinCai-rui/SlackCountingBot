@@ -99,8 +99,8 @@ async function handleCorrectCount(message, say, client, number, complexity) {
         await client.reactions.add({
             channel: message.channel,
             timestamp: message.ts,
-            name: reactionEmoji.startsWith(':') ? reactionEmoji : `:${reactionEmoji}:`
-        });
+            name: reactionEmoji === '100' ? '💯' : reactionEmoji
+        });        
 
         await checkAndHandleMilestones(message, say, number);
 
@@ -108,9 +108,10 @@ async function handleCorrectCount(message, say, client, number, complexity) {
         await statsManager.saveStats();
     } catch (error) {
         console.error(error);
-        await say({
-            text: `Error: ${error.message}`
-        });
+        //await say({
+        //    text: `Error: ${error.message}`
+        //});
+        await say(error)
     }
 }
 
