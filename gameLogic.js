@@ -188,7 +188,7 @@ function getUnicodeEmoji(shortcode) {
         'raised_hand_with_fingers_splayed': '🖐️',
         'muscle': '💪',
         'white_check_mark': '✅',
-        '💯': '💯'
+        '100': '💯'
     };
 
     return emojiMap[shortcode] || shortcode;
