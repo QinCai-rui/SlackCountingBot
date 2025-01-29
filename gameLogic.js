@@ -99,8 +99,8 @@ async function handleCorrectCount(message, say, client, number, complexity) {
         await client.reactions.add({
             channel: message.channel,
             timestamp: message.ts,
-            name: reactionEmoji === '100' ? '💯' : reactionEmoji
-        });        
+            name: reactionEmoji
+        });          
 
         await checkAndHandleMilestones(message, say, number);
 
@@ -135,7 +135,7 @@ function getReactionEmoji(number) {
         case 12345: return '1234';
         case 31415: return 'pie';
         default:
-            if (number % 100 === 0) return '100';
+            if (number % 100 === 0) return '💯';
             return 'white_check_mark';
     }
 }
