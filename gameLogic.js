@@ -90,16 +90,10 @@ async function handleIncorrectCount(message, say, client, reason) {
 async function handleCorrectCount(message, say, client, number, complexity) {
     try {
         let reactionEmoji = getReactionEmoji(number);
-
-        // Check if the emoji is '100' and adjust the name accordingly
-        if (reactionEmoji === '100') {
-            reactionEmoji = '💯';
-        }
-
         await client.reactions.add({
             channel: message.channel,
             timestamp: message.ts,
-            name: reactionEmoji === '100' ? '💯' : reactionEmoji
+            name: reactionEmoji
         });
 
         await checkAndHandleMilestones(message, say, number);
@@ -108,10 +102,9 @@ async function handleCorrectCount(message, say, client, number, complexity) {
         await statsManager.saveStats();
     } catch (error) {
         console.error(error);
-        //await say({
-        //    text: `Error: ${error.message}`
-        //});
-        await say(error)
+        await say({
+            text: `Error: ${error.message}`
+        });
     }
 }
 
@@ -135,7 +128,7 @@ function getReactionEmoji(number) {
         case 12345: return '1234';
         case 31415: return 'pie';
         default:
-            if (number % 100 === 0) return '💯';
+//            if (number % 100 === 0) return '💯';
             return 'white_check_mark';
     }
 }
@@ -188,7 +181,7 @@ function getUnicodeEmoji(shortcode) {
         'raised_hand_with_fingers_splayed': '🖐️',
         'muscle': '💪',
         'white_check_mark': '✅',
-        '100': '💯'
+//        '💯': '💯'
     };
 
     return emojiMap[shortcode] || shortcode;
