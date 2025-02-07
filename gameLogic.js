@@ -10,8 +10,7 @@ const statsManager = require('./statsManager');
 const { range, hasNumericValueDependencies, detDependencies, e, equalText } = require('mathjs');
 
 async function processMessage(message, say, client, isEval = false) {
-    message.text = message.text.replace(/\/\/.*$/, '').trim(); // Remove comments with //
-    message.text = message.text.replace(/\#.*$/, '').trim(); // Remove comments with #
+    message.text = message.text.replace(/\/\/.*$/, '').replace(/\#.*$/, '').trim(); // Remove comments
     if (!/^[\d+\-*/^√∛().\s!]+$|^.*sqrt\(.*\)|.*cbrt\(.*\).*$/.test(message.text)) {
         return;
     }
