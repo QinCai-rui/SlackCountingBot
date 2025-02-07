@@ -10,7 +10,6 @@ const statsManager = require('./statsManager');
 const { range, hasNumericValueDependencies, detDependencies, e, equalText } = require('mathjs');
 
 async function processMessage(message, say, client, isEval = false) {
-    message.text = message.text.replace(/\/\/.*$/, '').replace(/\#.*$/, '').trim(); // Remove comments
     if (!/^[\d+\-*/^√∛().\s!]+$|^.*sqrt\(.*\)|.*cbrt\(.*\).*$/.test(message.text)) {
         return;
     }
@@ -129,8 +128,11 @@ function getReactionEmoji(number) {
         case 12345: return '1234';
         case 31415: return 'pie';
         default:
-//            if (number % 100 === 0) return '💯';
-            return 'white_check_mark';
+            if (number % 100 === 0) {
+                return '100';
+            } else {
+                return 'white_check_mark';
+            }
     }
 }
 
@@ -182,7 +184,7 @@ function getUnicodeEmoji(shortcode) {
         'raised_hand_with_fingers_splayed': '🖐️',
         'muscle': '💪',
         'white_check_mark': '✅',
-//        '💯': '💯'
+        '100': '💯'
     };
 
     return emojiMap[shortcode] || shortcode;
